@@ -9,29 +9,46 @@
 #import <Foundation/Foundation.h>
 #import "MBProgressHUD.h"
 
-/**
- *  屏幕的宽度和高度
- *
- */
-#define kScreen_height  [[UIScreen mainScreen] bounds].size.height
-#define kScreen_width   [[UIScreen mainScreen] bounds].size.width
+static NSString *const kLoadingMessage = @"加载中";
+static CGFloat const   kShowTime  = 2.0f;
 
+@interface MBManager : NSObject
 
 /**
- *  DEBUG模式下打印信息，RELEASE模式不打印
- *
+ *  是否显示变淡效果，默认为YES，  PS：只为 showPermanentAlert:(NSString *) alert 和 showLoading 方法添加
  */
+@property (nonatomic, assign) BOOL isShowGloomy;
+/**
+ *  显示“加载中”，待圈圈，若要修改直接修改kLoadingMessage的值即可
+ */
++ (void) showLoading;
+/**
+ *  一直显示自定义提示语，不带圈圈
+ *
+ *  @param alert 提示信息
+ */
++ (void) showPermanentAlert:(NSString *) alert;
+/**
+ *  显示简短的提示语，默认2秒钟，时间可直接修改kShowTime
+ *
+ *  @param alert 提示信息
+ */
++ (void) showBriefAlert:(NSString *) alert;
 
-#ifdef DEBUG
-#define kDLOG(FORMAT, ...) fprintf(stderr,"%s: %d\t  %s\n",[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String])
-#define NSLog(...)  NSLog(__VA_ARGS__)
-#else
-#define kDLOG(...)
-#define NSLog(...)
-#endif
 
 
-@interface MBManager : NSObject<MBProgressHUDDelegate>
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  *  只提示文字   在加载到的屏幕中央
  *
