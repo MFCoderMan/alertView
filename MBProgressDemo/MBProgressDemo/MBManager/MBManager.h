@@ -47,8 +47,35 @@ static CGFloat const   kShowTime  = 2.0f;
  ***************************************
  */
 
+/**
+ *  显示简短提示语到view上
+ *
+ *  @param message 提示语
+ *  @param view    要添加到的view
+ */
++ (void) showBriefMessage:(NSString *) message InView:(UIView *) view;
+/**
+ *  显示长久的（只要不用手触摸屏幕或者调用hideAlert方法就会一直显示）提示语到view上
+ *
+ *  @param message 提示语
+ *  @param view    要添加到的view
+ */
++ (void) showPermanentMessage:(NSString *)message InView:(UIView *) view;
+/**
+ *  显示网络加载到view上
+ *
+ *  @param view 要添加到的view
+ */
++ (void) showLoadingInView:(UIView *) view;
 
 
+
+/***************************************
+ *                                     *
+ *  以下方法仅限于之前的项目使用,现已废弃    *
+ *                                     *
+ ***************************************
+ */
 
 /**
  *  只提示文字   在加载到view中央

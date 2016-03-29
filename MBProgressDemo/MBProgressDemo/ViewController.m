@@ -10,6 +10,7 @@
 #import "MBManager.h"
 
 @interface ViewController ()
+@property (weak, nonatomic) IBOutlet UIView *backView;
 
 @end
 
@@ -65,13 +66,14 @@
 
 - (IBAction)showTextOnly:(UIButton *)sender {
    // [MBManager showAlertTextOnly:@"自动消失" inView:self.view];
-    [MBManager showBriefAlert:@"提示语"];
+    [MBManager showBriefMessage:@"提示语" InView:self.view];
 }
 - (IBAction)showStill:(UIButton *)sender {
 //    [MBManager showAlert:@"loading..." inView:self.view];
 //    [MBManager hideAlert];
 //    [MBManager showAlertTextOnly:@"自动消失" inView:self.view];
-    [MBManager showPermanentAlert:@"一直显示"];
+ //   [MBManager showPermanentAlert:@"一直显示"];
+    [MBManager showPermanentMessage:@"一直显示" InView:self.backView];
 }
 
 - (IBAction)showDelay:(UIButton *)sender {

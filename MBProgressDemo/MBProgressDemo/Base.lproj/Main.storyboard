@@ -18,22 +18,28 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zEa-dJ-Iqq">
-                                <rect key="frame" x="76" y="136" width="46" height="30"/>
-                                <state key="normal" title="Button"/>
+                                <rect key="frame" x="84" y="99" width="99" height="30"/>
+                                <state key="normal" title="效果0"/>
                                 <connections>
                                     <action selector="showTextOnly:" destination="BYZ-38-t0r" eventType="touchUpInside" id="XZB-My-5sE"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PoH-QE-oeK">
-                                <rect key="frame" x="76" y="200" width="46" height="30"/>
-                                <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="showStill:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rjH-xq-FYe"/>
-                                </connections>
-                            </button>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wFi-bx-O1C">
+                                <rect key="frame" x="25" y="149" width="240" height="128"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PoH-QE-oeK">
+                                        <rect key="frame" x="66" y="49" width="77" height="30"/>
+                                        <state key="normal" title="效果1"/>
+                                        <connections>
+                                            <action selector="showStill:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rjH-xq-FYe"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zxu-9M-Y1o">
-                                <rect key="frame" x="76" y="266" width="46" height="30"/>
-                                <state key="normal" title="Button"/>
+                                <rect key="frame" x="84" y="341" width="99" height="30"/>
+                                <state key="normal" title="效果2"/>
                                 <connections>
                                     <action selector="showDelay:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0nu-Db-OfG"/>
                                 </connections>
@@ -41,9 +47,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <outlet property="backView" destination="wFi-bx-O1C" id="VB7-Zl-LzG"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="590" y="340"/>
         </scene>
     </scenes>
 </document>

@@ -13,8 +13,6 @@
 
 @interface MBManager ()
 {
-    
-//    UIView *showView;
     UITapGestureRecognizer *tap;
 }
 @end
@@ -23,8 +21,9 @@
 MBProgressHUD *HUD;
 UIView *bottomView;
 static MBManager *hudManager = nil;
+UIView *hudAddedView;
 
-
+#pragma mark - 初始化
 -(instancetype)init{
     if (self = [super init]) {
         [self initBackView];
@@ -32,8 +31,10 @@ static MBManager *hudManager = nil;
     }
     return self;
 }
-
+#pragma mark - 简短提示语
 + (void) showBriefMessage:(NSString *) message InView:(UIView *) view{
+    hudAddedView = view;
+    [self shareManager];
     if (view == nil) {
         view = [[UIApplication sharedApplication] windows].lastObject;
     }
@@ -46,7 +47,10 @@ static MBManager *hudManager = nil;
     [hud hide:YES afterDelay:kShowTime];
     [hudManager addGestureInView:view];
 }
+#pragma mark - 长时间的提示语
 + (void) showPermanentMessage:(NSString *)message InView:(UIView *) view{
+    hudAddedView = view;
+    [self shareManager];
     if (view == nil) {
         view = [[UIApplication sharedApplication] windows].lastObject;
     }
@@ -55,13 +59,20 @@ static MBManager *hudManager = nil;
     hud.removeFromSuperViewOnHide = YES;
     hud.mode = MBProgressHUDModeCustomView;
     if (hudManager.isShowGloomy) {
+        //如果添加了view则将botomView的frame修改与view一样大
+        if (hudAddedView) {
+            bottomView.frame = CGRectMake(0, 0, hudAddedView.frame.size.width, hudAddedView.frame.size.height);
+        }
         [view addSubview:bottomView];
         [hudManager showBackView];
     }
     [view bringSubviewToFront:hud];
     [hudManager addGestureInView:view];
 }
+#pragma mark - 网络加载提示用
 + (void) showLoadingInView:(UIView *) view{
+    hudAddedView = view;
+    [self shareManager];
     if (view == nil) {
         view = [[UIApplication sharedApplication] windows].lastObject;
     }
@@ -69,6 +80,10 @@ static MBManager *hudManager = nil;
     hud.labelText = @"加载中";
     hud.removeFromSuperViewOnHide = YES;
     if (hudManager.isShowGloomy) {
+        //如果添加了view则将botomView的frame修改与view一样大
+        if (hudAddedView) {
+            bottomView.frame = CGRectMake(0, 0, hudAddedView.frame.size.width, hudAddedView.frame.size.height);
+        }
         [view addSubview:bottomView];
         [hudManager showBackView];
     }
@@ -76,16 +91,17 @@ static MBManager *hudManager = nil;
     [hud show:YES];
     [hudManager addGestureInView:view];
 }
+#pragma mark - 外部调用
 +(void)showLoading{
-    [self shareManager];
+//    [self shareManager];
     [self showLoadingInView:nil];
 }
 +(void)showBriefAlert:(NSString *)alert{
-    [self shareManager];
+//    [self shareManager];
     [self showBriefMessage:alert InView:nil];
 }
 +(void)showPermanentAlert:(NSString *)alert{
-    [self shareManager];
+//    [self shareManager];
     [self showPermanentMessage:alert InView:nil];
 }
 
@@ -100,11 +116,9 @@ static MBManager *hudManager = nil;
     bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_width, kScreen_height)];
     bottomView.backgroundColor = [UIColor blackColor];
     bottomView.alpha = 0.5;
-//    showView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_width, kScreen_height)];
-//    showView.backgroundColor = [UIColor clearColor];
     bottomView.hidden = YES;
-//    showView.hidden = YES;
 }
+#pragma mark - 单例
 +(instancetype )shareManager{
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -130,7 +144,12 @@ static MBManager *hudManager = nil;
     [HUD hide:YES];
     [HUD removeFromSuperViewOnHide];
     [hudManager hideBackView];
-    UIView *view = [[UIApplication sharedApplication].windows lastObject];
+    UIView *view ;
+    if (hudAddedView) {
+        view = hudAddedView;
+    }else{
+        view = [[UIApplication sharedApplication].windows lastObject];
+    }
     [self hideHUDForView:view];
 }
 + (void)hideHUDForView:(UIView *)view
@@ -158,19 +177,18 @@ static MBManager *hudManager = nil;
 #pragma mark - 深色背景
 -(void)showBackView{
     bottomView.hidden = NO;
-//    showView.hidden = NO;
 }
 -(void)hideBackView{
     bottomView.hidden = YES;
-//    showView.hidden = YES;
     [tap removeTarget:nil action:nil];
+    bottomView.frame = CGRectMake(0, 0, kScreen_width, kScreen_height);
 }
 #pragma mark - 私有方法
 -(void)showAlertTextOnly:(NSString *)title inView:(UIView *)view{
-    view = [[UIApplication sharedApplication] windows].lastObject;
+    if (view == nil) {
+        view = [[UIApplication sharedApplication] windows].lastObject;
+    }
     HUD = [MBProgressHUD showHUDAddedTo:view animated:YES];
-    
-    // Configure for text only and offset down
     HUD.mode = MBProgressHUDModeText;
     HUD.labelText = title;
     HUD.margin = 10.f;
@@ -180,6 +198,9 @@ static MBManager *hudManager = nil;
     [self addGestureInView:view];
 }
 -(void)showAlert:(NSString *)title inView:(UIView *)view{
+    if (view == nil) {
+        view = [[UIApplication sharedApplication] windows].lastObject;
+    }
     HUD = [[MBProgressHUD alloc] initWithView:view];
     [view addSubview:bottomView];
     [view addSubview:HUD];
@@ -191,6 +212,9 @@ static MBManager *hudManager = nil;
     [self addGestureInView:view];
 }
 -(void)showAlert:(NSString *)title after:(NSTimeInterval)delay inView:(UIView *)view{
+    if (view == nil) {
+        view = [[UIApplication sharedApplication] windows].lastObject;
+    }
     HUD = [[MBProgressHUD alloc] initWithView:view];
     [view addSubview:HUD];
     HUD.labelText = title;
@@ -198,7 +222,6 @@ static MBManager *hudManager = nil;
     [HUD hide:YES afterDelay:delay];
     [self addGestureInView:view];
 }
-
 #pragma mark - 添加手势,触摸屏幕将提示框隐藏
 -(void)addGestureInView:(UIView *)view{
     tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapTheScreen)];
@@ -213,6 +236,7 @@ static MBManager *hudManager = nil;
     [tap removeTarget:nil action:nil];
     [MBManager hideAlert];
 }
+#pragma mark - 解决手势与cell 和 button的冲突
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     if ([NSStringFromClass([touch.view class]) isEqualToString:@"PKProductMainListTableViewCellContentView"]) {
         return NO;
