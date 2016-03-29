@@ -1,7 +1,16 @@
 //
 //  MBManager.h
 //  MBProgressDemo
-//
+
+/********************************************
+ *                                          *
+ *   版权属于原作者                           *
+ *   https://github.com/hungryBoy/alertView *
+ *   Authour: hungryBoy                     *
+ *   mail:    zhangyunguang_13@sina.cn      *
+ *                                          *
+ ********************************************
+ */
 //  Created by ZhangYunguang on 16/1/23.
 //  Copyright © 2016年 ZhangYunguang. All rights reserved.
 //
