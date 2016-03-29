@@ -18,7 +18,6 @@
 @end
 
 @implementation MBManager
-MBProgressHUD *HUD;
 UIView *bottomView;
 static MBManager *hudManager = nil;
 UIView *hudAddedView;
@@ -93,15 +92,12 @@ UIView *hudAddedView;
 }
 #pragma mark - 外部调用
 +(void)showLoading{
-//    [self shareManager];
     [self showLoadingInView:nil];
 }
 +(void)showBriefAlert:(NSString *)alert{
-//    [self shareManager];
     [self showBriefMessage:alert InView:nil];
 }
 +(void)showPermanentAlert:(NSString *)alert{
-//    [self shareManager];
     [self showPermanentMessage:alert InView:nil];
 }
 
@@ -126,23 +122,8 @@ UIView *hudAddedView;
     });
     return hudManager;
 }
-#pragma mark - 外部直接调用的类方法
-+(void)showAlertTextOnly:(NSString *)title inView:(UIView *)view{
-    [MBManager shareManager];
-    [hudManager showAlertTextOnly:title inView:view];
-}
-+(void)showAlert:(NSString *)title inView:(UIView *)view{
-    [MBManager shareManager];
-    [hudManager showAlert:title inView:view];
-}
-+(void)showAlert:(NSString *)title after:(NSTimeInterval)delay inView:(UIView *)view{
-    [MBManager shareManager];
-    [hudManager showAlert:title after:delay inView:view];
-}
 #pragma mark - 隐藏提示框
 +(void)hideAlert{
-    [HUD hide:YES];
-    [HUD removeFromSuperViewOnHide];
     [hudManager hideBackView];
     UIView *view ;
     if (hudAddedView) {
@@ -183,45 +164,7 @@ UIView *hudAddedView;
     [tap removeTarget:nil action:nil];
     bottomView.frame = CGRectMake(0, 0, kScreen_width, kScreen_height);
 }
-#pragma mark - 私有方法
--(void)showAlertTextOnly:(NSString *)title inView:(UIView *)view{
-    if (view == nil) {
-        view = [[UIApplication sharedApplication] windows].lastObject;
-    }
-    HUD = [MBProgressHUD showHUDAddedTo:view animated:YES];
-    HUD.mode = MBProgressHUDModeText;
-    HUD.labelText = title;
-    HUD.margin = 10.f;
-    //HUD.yOffset = 200;
-    HUD.removeFromSuperViewOnHide = YES;
-    [HUD hide:YES afterDelay:2];
-    [self addGestureInView:view];
-}
--(void)showAlert:(NSString *)title inView:(UIView *)view{
-    if (view == nil) {
-        view = [[UIApplication sharedApplication] windows].lastObject;
-    }
-    HUD = [[MBProgressHUD alloc] initWithView:view];
-    [view addSubview:bottomView];
-    [view addSubview:HUD];
-    [self showBackView];
-   // HUD.dimBackground = YES;
-    HUD.labelText = title;
-    [HUD show:YES];
-    [view bringSubviewToFront:HUD];
-    [self addGestureInView:view];
-}
--(void)showAlert:(NSString *)title after:(NSTimeInterval)delay inView:(UIView *)view{
-    if (view == nil) {
-        view = [[UIApplication sharedApplication] windows].lastObject;
-    }
-    HUD = [[MBProgressHUD alloc] initWithView:view];
-    [view addSubview:HUD];
-    HUD.labelText = title;
-    [HUD show:YES];
-    [HUD hide:YES afterDelay:delay];
-    [self addGestureInView:view];
-}
+
 #pragma mark - 添加手势,触摸屏幕将提示框隐藏
 -(void)addGestureInView:(UIView *)view{
     tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapTheScreen)];
@@ -231,7 +174,6 @@ UIView *hudAddedView;
 #pragma mark -点击屏幕
 -(void)tapTheScreen{
     NSLog(@"点击屏幕");
-    [HUD hide:YES];
     [hudManager hideBackView];
     [tap removeTarget:nil action:nil];
     [MBManager hideAlert];

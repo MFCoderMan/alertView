@@ -68,39 +68,4 @@ static CGFloat const   kShowTime  = 2.0f;
  */
 + (void) showLoadingInView:(UIView *) view;
 
-
-
-/***************************************
- *                                     *
- *  以下方法仅限于之前的项目使用,现已废弃    *
- *                                     *
- ***************************************
- */
-
-/**
- *  只提示文字   在加载到view中央
- *
- *  @param title 要显示的文字
- *  @param view  要加载到的界面
- */
-+(void)showAlertTextOnly:(NSString *)title inView:(UIView *)view;
-/**
- *  展示alert
- *
- *  @param title 要显示的信息
- *  @param view  要加载到的界面
- */
-+(void)showAlert:(NSString *)title inView:(UIView *)view;
-
-/**
- *  自定义时间隐藏alert
- *
- *  @param title 要显示的信息
- *  @param delay 延迟的时间
- *  @param view  要加载到的界面
- */
-+(void)showAlert:(NSString *)title after:(NSTimeInterval )delay inView:(UIView *)view;
-
-
-
 @end
