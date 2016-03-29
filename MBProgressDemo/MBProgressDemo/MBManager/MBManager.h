@@ -34,23 +34,24 @@ static CGFloat const   kShowTime  = 2.0f;
  *  @param alert 提示信息
  */
 + (void) showBriefAlert:(NSString *) alert;
+/**
+ *  隐藏alert
+ */
++(void)hideAlert;
 
 
-
-
-
-
-
-
-
-
-
+/***************************************
+ *                                     *
+ *  以下方法根据情况可选择使用，一般使用不到  *
+ *                                     *
+ ***************************************
+ */
 
 
 
 
 /**
- *  只提示文字   在加载到的屏幕中央
+ *  只提示文字   在加载到view中央
  *
  *  @param title 要显示的文字
  *  @param view  要加载到的界面
@@ -73,9 +74,6 @@ static CGFloat const   kShowTime  = 2.0f;
  */
 +(void)showAlert:(NSString *)title after:(NSTimeInterval )delay inView:(UIView *)view;
 
-/**
- *  隐藏alert
- */
-+(void)hideAlert;
+
 
 @end
