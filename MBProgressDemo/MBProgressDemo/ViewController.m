@@ -34,14 +34,20 @@
     [MBManager showBriefMessage:@"提示语" InView:self.view];
 }
 - (IBAction)showStill:(UIButton *)sender {
- //   [MBManager showPermanentAlert:@"一直显示"];
+#if 0
+    [MBManager showPermanentAlert:@"一直显示"];
+#else
     [MBManager showPermanentMessage:@"一直显示" InView:self.backView];
+#endif
 }
 
 - (IBAction)showDelay:(UIButton *)sender {
+#if 1
     [MBManager showLoading];
-//    [MBManager hideAlert];
-//    [MBManager showBriefAlert:@"hello"];
+#else
+    [MBManager hideAlert];
+    [MBManager showBriefAlert:@"hello"];
+#endif
 }
 
 
