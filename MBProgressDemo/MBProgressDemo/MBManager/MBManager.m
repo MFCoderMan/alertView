@@ -30,6 +30,21 @@ UIView *hudAddedView;
     }
     return self;
 }
+#pragma mark - 初始化深色背景
+-(void)initBackView{
+    bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_width, kScreen_height)];
+    bottomView.backgroundColor = [UIColor blackColor];
+    bottomView.alpha = 0.5;
+    bottomView.hidden = YES;
+}
+#pragma mark - 单例
++(instancetype )shareManager{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        hudManager = [[self alloc] init];
+    });
+    return hudManager;
+}
 #pragma mark - 简短提示语
 + (void) showBriefMessage:(NSString *) message InView:(UIView *) view{
     hudAddedView = view;
@@ -76,7 +91,7 @@ UIView *hudAddedView;
         view = [[UIApplication sharedApplication] windows].lastObject;
     }
     MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:view];
-    hud.labelText = @"加载中";
+    hud.labelText = kLoadingMessage;
     hud.removeFromSuperViewOnHide = YES;
     if (hudManager.isShowGloomy) {
         //如果添加了view则将botomView的frame修改与view一样大
@@ -104,24 +119,6 @@ UIView *hudAddedView;
 
 
 
-
-
-
-#pragma mark - 初始化深色背景
--(void)initBackView{
-    bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_width, kScreen_height)];
-    bottomView.backgroundColor = [UIColor blackColor];
-    bottomView.alpha = 0.5;
-    bottomView.hidden = YES;
-}
-#pragma mark - 单例
-+(instancetype )shareManager{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        hudManager = [[self alloc] init];
-    });
-    return hudManager;
-}
 #pragma mark - 隐藏提示框
 +(void)hideAlert{
     [hudManager hideBackView];
