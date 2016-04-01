@@ -10,3 +10,6 @@ Hope you enjoy it. And any quetion,you can contact with me.
 ## Authour :hungryBoy
 
 ## mail:    zhangyunguang_13@sina.cn
+
+
+![alertView](https://github.com/hungryBoy/alertView/blob/master/MBManager.gif)
