@@ -50,7 +50,7 @@ UIView *hudAddedView;
     hudAddedView = view;
     [self shareManager];
     if (view == nil) {
-        view = [[UIApplication sharedApplication] windows].lastObject;
+        view = [[UIApplication sharedApplication] windows].firstObject;
     }
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];
     hud.labelText = message;
@@ -66,7 +66,7 @@ UIView *hudAddedView;
     hudAddedView = view;
     [self shareManager];
     if (view == nil) {
-        view = [[UIApplication sharedApplication] windows].lastObject;
+        view = [[UIApplication sharedApplication] windows].firstObject;
     }
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];
     hud.labelText = message;
@@ -88,7 +88,7 @@ UIView *hudAddedView;
     hudAddedView = view;
     [self shareManager];
     if (view == nil) {
-        view = [[UIApplication sharedApplication] windows].lastObject;
+        view = [[UIApplication sharedApplication] windows].firstObject;
     }
     MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:view];
     hud.labelText = kLoadingMessage;
@@ -126,7 +126,7 @@ UIView *hudAddedView;
     if (hudAddedView) {
         view = hudAddedView;
     }else{
-        view = [[UIApplication sharedApplication].windows lastObject];
+        view = [[UIApplication sharedApplication].windows firstObject];
     }
     [self hideHUDForView:view];
 }
