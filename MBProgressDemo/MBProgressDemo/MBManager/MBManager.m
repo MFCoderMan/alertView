@@ -26,7 +26,7 @@ UIView *hudAddedView;
 -(instancetype)init{
     if (self = [super init]) {
         [self initBackView];
-        self.isShowGloomy = NO;
+        self.isShowGloomy = YES;
     }
     return self;
 }
@@ -116,9 +116,6 @@ UIView *hudAddedView;
     [self showPermanentMessage:alert InView:nil];
 }
 
-
-
-
 #pragma mark - 隐藏提示框
 +(void)hideAlert{
     [hudManager hideBackView];
@@ -158,7 +155,7 @@ UIView *hudAddedView;
 }
 -(void)hideBackView{
     bottomView.hidden = YES;
-    [tap removeTarget:nil action:nil];
+//    [tap removeTarget:nil action:nil];
     bottomView.frame = CGRectMake(0, 0, kScreen_width, kScreen_height);
 }
 
@@ -172,7 +169,7 @@ UIView *hudAddedView;
 -(void)tapTheScreen{
     NSLog(@"点击屏幕");
     [hudManager hideBackView];
-    [tap removeTarget:nil action:nil];
+//    [tap removeTarget:nil action:nil];
     [MBManager hideAlert];
 }
 #pragma mark - 解决手势与cell 和 button的冲突
