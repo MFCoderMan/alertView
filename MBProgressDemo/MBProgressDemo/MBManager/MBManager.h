@@ -47,7 +47,13 @@ static CGFloat const   kShowTime  = 2.0f;
  *  隐藏alert
  */
 +(void)hideAlert;
-
+///**
+// *  自定义加载视图接口，支持自定义图片
+// *
+// *  @param imageName  要显示的图片，最好是37 x 37大小的图片
+// *  @param title 要显示的提示文字
+// */
+//+(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title;
 
 /***************************************
  *                                     *
@@ -76,5 +82,13 @@ static CGFloat const   kShowTime  = 2.0f;
  *  @param view 要添加到的view
  */
 + (void) showLoadingInView:(UIView *) view;
+/**
+ *  自定义加载视图接口，支持自定义图片
+ *
+ *  @param imageName  要显示的图片，最好是37 x 37大小的图片
+ *  @param title 要显示的提示文字
+ *  @param view 要把提示框添加到的view
+ */
++(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title inView:(UIView *)view;
 
 @end

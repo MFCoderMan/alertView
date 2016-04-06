@@ -105,6 +105,24 @@ UIView *hudAddedView;
     [hud show:YES];
     [hudManager addGestureInView:view];
 }
++(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title inView:(UIView *)view{
+    hudAddedView = view;
+    [self shareManager];
+    if (view == nil) {
+        view = [[UIApplication sharedApplication]windows].lastObject;
+    }
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];
+    UIImageView *littleView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 37, 37)];
+    littleView.image = [UIImage imageNamed:imageName];
+    hud.customView = littleView;
+    hud.removeFromSuperViewOnHide = YES;
+    hud.animationType = MBProgressHUDAnimationZoom;
+    hud.labelText = title;
+    hud.mode = MBProgressHUDModeCustomView;
+    [hud show:YES];
+    [hud hide:YES afterDelay:3];
+    [hudManager addGestureInView:view];
+}
 #pragma mark - 外部调用
 +(void)showLoading{
     [self showLoadingInView:nil];
@@ -115,7 +133,9 @@ UIView *hudAddedView;
 +(void)showPermanentAlert:(NSString *)alert{
     [self showPermanentMessage:alert InView:nil];
 }
-
+//+(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title{
+//    [self showAlertWithCustomImage:imageName title:title inView:nil];
+//}
 #pragma mark - 隐藏提示框
 +(void)hideAlert{
     [hudManager hideBackView];

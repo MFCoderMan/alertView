@@ -26,7 +26,8 @@
      *         2、一句代码搞定提示信息
      *         3、只要轻触屏幕或者调用[MBManager hideAlert]，提示信息就会消失
      */
-
+    
+    [MBManager showAlertWithCustomImage:@"shouye_02" title:@"等一等"];
 }
 
 
