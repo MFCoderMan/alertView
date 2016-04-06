@@ -120,7 +120,7 @@ UIView *hudAddedView;
     hud.labelText = title;
     hud.mode = MBProgressHUDModeCustomView;
     [hud show:YES];
-    [hud hide:YES afterDelay:3];
+    [hud hide:YES afterDelay:kShowTime];
     [hudManager addGestureInView:view];
 }
 #pragma mark - 外部调用
