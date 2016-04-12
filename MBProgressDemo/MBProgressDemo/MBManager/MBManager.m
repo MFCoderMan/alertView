@@ -11,7 +11,7 @@
 #define kScreen_height  [[UIScreen mainScreen] bounds].size.height
 #define kScreen_width   [[UIScreen mainScreen] bounds].size.width
 
-@interface MBManager ()
+@interface MBManager ()<UIGestureRecognizerDelegate>
 {
     UITapGestureRecognizer *tap;
 }
@@ -175,13 +175,14 @@ UIView *hudAddedView;
 }
 -(void)hideBackView{
     bottomView.hidden = YES;
-//    [tap removeTarget:nil action:nil];
+    [tap removeTarget:nil action:nil];
     bottomView.frame = CGRectMake(0, 0, kScreen_width, kScreen_height);
 }
 
 #pragma mark - 添加手势,触摸屏幕将提示框隐藏
 -(void)addGestureInView:(UIView *)view{
     tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapTheScreen)];
+    tap.delegate = self;
     [view addGestureRecognizer:tap];
         
 }
@@ -189,21 +190,16 @@ UIView *hudAddedView;
 -(void)tapTheScreen{
     NSLog(@"点击屏幕");
     [hudManager hideBackView];
-//    [tap removeTarget:nil action:nil];
+    [tap removeTarget:nil action:nil];
     [MBManager hideAlert];
 }
-#pragma mark - 解决手势与cell 和 button的冲突
+#pragma mark - 解决手势冲突
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-    if ([NSStringFromClass([touch.view class]) isEqualToString:@"PKProductMainListTableViewCellContentView"]) {
+    if ([touch.view isKindOfClass:[MBProgressHUD class]]) {
+        return YES;
+    }else{
         return NO;
     }
-    if ([touch.view isKindOfClass:[UITableViewCell class]]) {
-        return NO;
-    }
-    if ([touch.view isKindOfClass:[UIButton class]]) {
-        return NO;
-    }
-    return YES;
 }
 -(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{
     return YES;
