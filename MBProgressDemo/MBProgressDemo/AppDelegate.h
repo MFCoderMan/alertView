@@ -2,8 +2,8 @@
 //  AppDelegate.h
 //  MBProgressDemo
 //
-//  Created by ZhangYunguang on 16/1/23.
-//  Copyright © 2016年 ZhangYunguang. All rights reserved.
+//  Created by hungryBoy on 16/1/23.
+//  Copyright © 2016年 hungryBoy. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

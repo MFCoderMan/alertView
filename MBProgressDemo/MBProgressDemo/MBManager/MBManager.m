@@ -2,116 +2,119 @@
 //  MBManager.m
 //  MBProgressDemo
 //
-//  Created by ZhangYunguang on 16/1/23.
-//  Copyright © 2016年 ZhangYunguang. All rights reserved.
+//  Created by hungryBoy on 16/1/23.
+//  Copyright © 2016年 hungryBoy. All rights reserved.
 //
 
 #import "MBManager.h"
 
 #define kScreen_height  [[UIScreen mainScreen] bounds].size.height
 #define kScreen_width   [[UIScreen mainScreen] bounds].size.width
+#define kDefaultRect     CGRectMake(0, 0, kScreen_width, kScreen_height)
 
-@interface MBManager ()<UIGestureRecognizerDelegate>
-{
-    UITapGestureRecognizer *tap;
-}
-@end
+#define kDefaultView [[UIApplication sharedApplication] keyWindow]
+
+#define kGloomyBlackColor  [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5]
+#define kGloomyClearCloler  [UIColor colorWithRed:1 green:1 blue:1 alpha:0]
+
+/* 默认网络提示，可在这统一修改 */
+static NSString *const kLoadingMessage = @"加载中";
+
+/* 默认简短提示语显示的时间，在这统一修改 */
+static CGFloat const   kShowTime  = 2.0f;
+
+/* 默认超时时间，30s后自动去除提示框 */
+static NSTimeInterval const interval = 30.0f;
+
+/* 手势是否可用，默认yes，轻触屏幕提示框隐藏 */
+static BOOL isAvalibleTouch = YES;
 
 @implementation MBManager
-UIView *bottomView;
-static MBManager *hudManager = nil;
-UIView *hudAddedView;
-
-#pragma mark - 初始化
--(instancetype)init{
-    if (self = [super init]) {
-        [self initBackView];
-        self.isShowGloomy = YES;
+UIView *gloomyView;//深色背景
+UIView *prestrainView;//预加载view
+BOOL isShowGloomy;//是否显示深色背景
+#pragma mark -   类初始化
++ (void)initialize {
+    if (self == [MBManager self]) {
+        //该方法只会走一次
+        [self customView];
     }
-    return self;
 }
-#pragma mark - 初始化深色背景
--(void)initBackView{
-    bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_width, kScreen_height)];
-    bottomView.backgroundColor = [UIColor blackColor];
-    bottomView.alpha = 0.5;
-    bottomView.hidden = YES;
+#pragma mark - 初始化gloomyView
++(void)customView {
+    gloomyView = [[GloomyView alloc] initWithFrame:kDefaultRect];
+    gloomyView.backgroundColor = kGloomyBlackColor;
+    gloomyView.hidden = YES;
+    isShowGloomy = YES;
 }
-#pragma mark - 单例
-+(instancetype )shareManager{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        hudManager = [[self alloc] init];
-    });
-    return hudManager;
++ (void)showGloomy:(BOOL)isShow {
+    isShowGloomy = isShow;
 }
 #pragma mark - 简短提示语
-+ (void) showBriefMessage:(NSString *) message InView:(UIView *) view{
-    hudAddedView = view;
-    [self shareManager];
-    if (view == nil) {
-        view = [[UIApplication sharedApplication] windows].lastObject;
-    }
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];
++ (void) showBriefAlert:(NSString *) message inView:(UIView *) view{
+    prestrainView = view;
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view ?:kDefaultView animated:YES];
     hud.labelText = message;
+    hud.animationType = MBProgressHUDAnimationZoom;
     hud.mode = MBProgressHUDModeText;
     hud.margin = 10.f;
     //HUD.yOffset = 200;
     hud.removeFromSuperViewOnHide = YES;
     [hud hide:YES afterDelay:kShowTime];
-    [hudManager addGestureInView:view];
 }
 #pragma mark - 长时间的提示语
-+ (void) showPermanentMessage:(NSString *)message InView:(UIView *) view{
-    hudAddedView = view;
-    [self shareManager];
-    if (view == nil) {
-        view = [[UIApplication sharedApplication] windows].lastObject;
-    }
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];
++ (void) showPermanentMessage:(NSString *)message inView:(UIView *) view{
+    prestrainView = view;
+    gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
+                                           kDefaultRect;
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:gloomyView animated:YES];
     hud.labelText = message;
-    hud.removeFromSuperViewOnHide = YES;
+    hud.animationType = MBProgressHUDAnimationZoom;
     hud.mode = MBProgressHUDModeCustomView;
-    if (hudManager.isShowGloomy) {
-        //如果添加了view则将botomView的frame修改与view一样大
-        if (hudAddedView) {
-            bottomView.frame = CGRectMake(0, 0, hudAddedView.frame.size.width, hudAddedView.frame.size.height);
-        }
-        [view addSubview:bottomView];
-        [hudManager showBackView];
-    }
-    [view bringSubviewToFront:hud];
-    [hudManager addGestureInView:view];
+    hud.removeFromSuperViewOnHide = YES;
+    hud.mode = MBProgressHUDModeText;
+    [gloomyView addSubview:hud];
+    [self showClearGloomyView];
+    [hud show:YES];
 }
 #pragma mark - 网络加载提示用
 + (void) showLoadingInView:(UIView *) view{
-    hudAddedView = view;
-    [self shareManager];
-    if (view == nil) {
-        view = [[UIApplication sharedApplication] windows].lastObject;
-    }
-    MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:view];
+    prestrainView = view;
+    MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:gloomyView];
     hud.labelText = kLoadingMessage;
     hud.removeFromSuperViewOnHide = YES;
-    if (hudManager.isShowGloomy) {
-        //如果添加了view则将botomView的frame修改与view一样大
-        if (hudAddedView) {
-            bottomView.frame = CGRectMake(0, 0, hudAddedView.frame.size.width, hudAddedView.frame.size.height);
-        }
-        [view addSubview:bottomView];
-        [hudManager showBackView];
+    gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
+                                           kDefaultRect;
+    if (isShowGloomy) {
+        [self showBlackGloomyView];
+    }else {
+        [self showClearGloomyView];
     }
-    [view addSubview:hud];
+    [gloomyView addSubview:hud];
     [hud show:YES];
-    [hudManager addGestureInView:view];
+    [self hideAlertDelay];
+}
++ (void)showWaitingWithTitle:(NSString *)title inView:(UIView *)view {
+    prestrainView = view;
+    MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:gloomyView];
+    hud.labelText = title;
+    hud.removeFromSuperViewOnHide = YES;
+    gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
+                                           kDefaultRect;
+    if (isShowGloomy) {
+        [self showBlackGloomyView];
+    }else {
+        [self showClearGloomyView];
+    }
+    [gloomyView addSubview:hud];
+    [hud show:YES];
+    [self hideAlertDelay];
 }
 +(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title inView:(UIView *)view{
-    hudAddedView = view;
-    [self shareManager];
-    if (view == nil) {
-        view = [[UIApplication sharedApplication]windows].lastObject;
-    }
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];
+    prestrainView = view;
+    gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
+                                           kDefaultRect;
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view ?:kDefaultView animated:YES];
     UIImageView *littleView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 37, 37)];
     littleView.image = [UIImage imageNamed:imageName];
     hud.customView = littleView;
@@ -121,45 +124,70 @@ UIView *hudAddedView;
     hud.mode = MBProgressHUDModeCustomView;
     [hud show:YES];
     [hud hide:YES afterDelay:kShowTime];
-    [hudManager addGestureInView:view];
 }
-#pragma mark - 外部调用
+#pragma mark - 加载在window上的提示框
 +(void)showLoading{
     [self showLoadingInView:nil];
 }
++ (void)showWaitingWithTitle:(NSString *)title{
+    [self showWaitingWithTitle:title inView:nil];
+}
 +(void)showBriefAlert:(NSString *)alert{
-    [self showBriefMessage:alert InView:nil];
+    [self showBriefAlert:alert inView:nil];
 }
 +(void)showPermanentAlert:(NSString *)alert{
-    [self showPermanentMessage:alert InView:nil];
+    [self showPermanentMessage:alert inView:nil];
 }
-//+(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title{
-//    [self showAlertWithCustomImage:imageName title:title inView:nil];
-//}
++(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title {
+    [self showAlertWithCustomImage:imageName title:title inView:nil];
+}
+
+#pragma mark -   GloomyView背景色
++ (void)showBlackGloomyView {
+    gloomyView.backgroundColor = kGloomyBlackColor;
+    [self gloomyConfig];
+}
++ (void)showClearGloomyView {
+    gloomyView.backgroundColor = kGloomyClearCloler;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self gloomyConfig];
+    });
+}
+#pragma mark -   决定GloomyView add到已给view或者window上
++ (void)gloomyConfig {
+    gloomyView.hidden = NO;
+    gloomyView.alpha = 1;
+    if (prestrainView) {
+        [prestrainView addSubview:gloomyView];
+    }else {
+        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+        if (![window.subviews containsObject:gloomyView]) {
+            [window addSubview:gloomyView];
+        }
+    }
+}
 #pragma mark - 隐藏提示框
 +(void)hideAlert{
-    [hudManager hideBackView];
-    UIView *view ;
-    if (hudAddedView) {
-        view = hudAddedView;
-    }else{
-        view = [[UIApplication sharedApplication].windows lastObject];
-    }
-    [self hideHUDForView:view];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        MBProgressHUD *hud = [MBManager HUDForView:gloomyView];
+        [UIView animateWithDuration:0.5 animations:^{
+            gloomyView.frame = CGRectZero;
+            gloomyView.center = prestrainView ? prestrainView.center: [UIApplication sharedApplication].keyWindow.center;
+            gloomyView.alpha = 0;
+            hud.alpha = 0;
+        } completion:^(BOOL finished) {
+            [hud removeFromSuperview];
+        }];
+    });
+   
 }
-+ (void)hideHUDForView:(UIView *)view
-{
-    [self hideHUDForView:view animated:YES];
+#pragma mark -   超时后（默认30s）自动隐藏加载提示
++ (void)hideAlertDelay {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self hideAlert];
+    });
 }
-+ (BOOL)hideHUDForView:(UIView *)view animated:(BOOL)animated {
-    MBProgressHUD *hud = [self HUDForView:view];
-    if (hud != nil) {
-        hud.removeFromSuperViewOnHide = YES;
-        [hud hide:animated];
-        return YES;
-    }
-    return NO;
-}
+#pragma mark -   获取view上的hud
 + (MBProgressHUD *)HUDForView:(UIView *)view {
     NSEnumerator *subviewsEnum = [view.subviews reverseObjectEnumerator];
     for (UIView *subview in subviewsEnum) {
@@ -169,40 +197,15 @@ UIView *hudAddedView;
     }
     return nil;
 }
-#pragma mark - 深色背景
--(void)showBackView{
-    bottomView.hidden = NO;
-}
--(void)hideBackView{
-    bottomView.hidden = YES;
-    [tap removeTarget:nil action:nil];
-    bottomView.frame = CGRectMake(0, 0, kScreen_width, kScreen_height);
-}
+@end
 
-#pragma mark - 添加手势,触摸屏幕将提示框隐藏
--(void)addGestureInView:(UIView *)view{
-    tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapTheScreen)];
-    tap.delegate = self;
-    [view addGestureRecognizer:tap];
-        
-}
-#pragma mark -点击屏幕
--(void)tapTheScreen{
-    NSLog(@"点击屏幕");
-    [hudManager hideBackView];
-    [tap removeTarget:nil action:nil];
-    [MBManager hideAlert];
-}
-#pragma mark - 解决手势冲突
--(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-    if ([touch.view isKindOfClass:[MBProgressHUD class]]) {
-        return YES;
-    }else{
-        return NO;
+
+@implementation GloomyView
+
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    if (isAvalibleTouch) {
+        [MBManager hideAlert];
     }
-}
--(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{
-    return YES;
 }
 
 @end
