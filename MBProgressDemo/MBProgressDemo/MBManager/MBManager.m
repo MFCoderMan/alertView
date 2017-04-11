@@ -52,78 +52,88 @@ BOOL isShowGloomy;//是否显示深色背景
 }
 #pragma mark - 简短提示语
 + (void) showBriefAlert:(NSString *) message inView:(UIView *) view{
-    prestrainView = view;
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view ?:kDefaultView animated:YES];
-    hud.labelText = message;
-    hud.animationType = MBProgressHUDAnimationZoom;
-    hud.mode = MBProgressHUDModeText;
-    hud.margin = 10.f;
-    //HUD.yOffset = 200;
-    hud.removeFromSuperViewOnHide = YES;
-    [hud hide:YES afterDelay:kShowTime];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        prestrainView = view;
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view ?:kDefaultView animated:YES];
+        hud.labelText = message;
+        hud.animationType = MBProgressHUDAnimationZoom;
+        hud.mode = MBProgressHUDModeText;
+        hud.margin = 10.f;
+        //HUD.yOffset = 200;
+        hud.removeFromSuperViewOnHide = YES;
+        [hud hide:YES afterDelay:kShowTime];
+    });
 }
 #pragma mark - 长时间的提示语
 + (void) showPermanentMessage:(NSString *)message inView:(UIView *) view{
-    prestrainView = view;
-    gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
-                                           kDefaultRect;
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:gloomyView animated:YES];
-    hud.labelText = message;
-    hud.animationType = MBProgressHUDAnimationZoom;
-    hud.mode = MBProgressHUDModeCustomView;
-    hud.removeFromSuperViewOnHide = YES;
-    hud.mode = MBProgressHUDModeText;
-    [gloomyView addSubview:hud];
-    [self showClearGloomyView];
-    [hud show:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        prestrainView = view;
+        gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
+        kDefaultRect;
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:gloomyView animated:YES];
+        hud.labelText = message;
+        hud.animationType = MBProgressHUDAnimationZoom;
+        hud.mode = MBProgressHUDModeCustomView;
+        hud.removeFromSuperViewOnHide = YES;
+        hud.mode = MBProgressHUDModeText;
+        [gloomyView addSubview:hud];
+        [self showClearGloomyView];
+        [hud show:YES];
+    });
 }
 #pragma mark - 网络加载提示用
 + (void) showLoadingInView:(UIView *) view{
-    prestrainView = view;
-    MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:gloomyView];
-    hud.labelText = kLoadingMessage;
-    hud.removeFromSuperViewOnHide = YES;
-    gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
-                                           kDefaultRect;
-    if (isShowGloomy) {
-        [self showBlackGloomyView];
-    }else {
-        [self showClearGloomyView];
-    }
-    [gloomyView addSubview:hud];
-    [hud show:YES];
-    [self hideAlertDelay];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        prestrainView = view;
+        MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:gloomyView];
+        hud.labelText = kLoadingMessage;
+        hud.removeFromSuperViewOnHide = YES;
+        gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
+        kDefaultRect;
+        if (isShowGloomy) {
+            [self showBlackGloomyView];
+        }else {
+            [self showClearGloomyView];
+        }
+        [gloomyView addSubview:hud];
+        [hud show:YES];
+        [self hideAlertDelay];
+    });
 }
 + (void)showWaitingWithTitle:(NSString *)title inView:(UIView *)view {
-    prestrainView = view;
-    MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:gloomyView];
-    hud.labelText = title;
-    hud.removeFromSuperViewOnHide = YES;
-    gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
-                                           kDefaultRect;
-    if (isShowGloomy) {
-        [self showBlackGloomyView];
-    }else {
-        [self showClearGloomyView];
-    }
-    [gloomyView addSubview:hud];
-    [hud show:YES];
-    [self hideAlertDelay];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        prestrainView = view;
+        MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:gloomyView];
+        hud.labelText = title;
+        hud.removeFromSuperViewOnHide = YES;
+        gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
+        kDefaultRect;
+        if (isShowGloomy) {
+            [self showBlackGloomyView];
+        }else {
+            [self showClearGloomyView];
+        }
+        [gloomyView addSubview:hud];
+        [hud show:YES];
+        [self hideAlertDelay];
+    });
 }
 +(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title inView:(UIView *)view{
-    prestrainView = view;
-    gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
-                                           kDefaultRect;
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view ?:kDefaultView animated:YES];
-    UIImageView *littleView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 37, 37)];
-    littleView.image = [UIImage imageNamed:imageName];
-    hud.customView = littleView;
-    hud.removeFromSuperViewOnHide = YES;
-    hud.animationType = MBProgressHUDAnimationZoom;
-    hud.labelText = title;
-    hud.mode = MBProgressHUDModeCustomView;
-    [hud show:YES];
-    [hud hide:YES afterDelay:kShowTime];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        prestrainView = view;
+        gloomyView.frame = view ? CGRectMake(0, 0, view.frame.size.width, view.frame.size.height):
+        kDefaultRect;
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view ?:kDefaultView animated:YES];
+        UIImageView *littleView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 37, 37)];
+        littleView.image = [UIImage imageNamed:imageName];
+        hud.customView = littleView;
+        hud.removeFromSuperViewOnHide = YES;
+        hud.animationType = MBProgressHUDAnimationZoom;
+        hud.labelText = title;
+        hud.mode = MBProgressHUDModeCustomView;
+        [hud show:YES];
+        [hud hide:YES afterDelay:kShowTime];
+    });
 }
 #pragma mark - 加载在window上的提示框
 +(void)showLoading{
