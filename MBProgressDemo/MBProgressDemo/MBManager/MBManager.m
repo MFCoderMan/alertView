@@ -187,6 +187,7 @@ BOOL isShowGloomy;//是否显示深色背景
             hud.alpha = 0;
         } completion:^(BOOL finished) {
             [hud removeFromSuperview];
+            [gloomyView removeFromSuperview];
         }];
     });
    

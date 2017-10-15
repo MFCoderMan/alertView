@@ -29,7 +29,15 @@
      */
     
 #if 1
-        [MBManager showAlertWithCustomImage:@"test" title:@"测试" inView:self.view];
+//    [MBManager showWaitingWithTitle:@"hehe"];
+//        [MBManager showAlertWithCustomImage:@"test" title:@"测试" inView:self.view];
+    
+    [MBManager showLoading];
+    
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [MBManager showWaitingWithTitle:@"hehe"];
+    });
 #else
         [MBManager showAlertWithCustomImage:@"test" title:@"测试"];//若运行此方法会发现提示框并没有加载出来
 #endif
