@@ -12,15 +12,6 @@
 @interface MBManager : NSObject
 
 /**
- * 说明：
- *        目前存在的bug，当app还未启动完成，当前的window为nil，这个时候如果调用不指定view的方法会造成提示框不显示的问题
- * 解决方法：
- *              使用制定view的加载提示，如  [MBManager showLoadingInView:self.view];
- *
- */
-
-
-/**
  *  是否显示变淡效果，默认为YES，  PS：只为 showPermanentAlert:(NSString *) alert 和 showLoading 方法添加
  */
 + (void)showGloomy:(BOOL) isShow;
@@ -52,6 +43,14 @@
  @param title 标题
  */
 +(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title;
+
+/**
+ 自定义提示的显示时间，默认横屏
+
+ @param message 提示语
+ @param showTime 提示时间
+ */
++ (void)showBriefAlert:(NSString *)message time:(NSInteger)showTime;
 /**
  *  隐藏alert
  */
@@ -102,6 +101,14 @@
  */
 +(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title inView:(UIView *)view;
 
+/**
+ 自定义显示时间
+
+ @param message 提示语
+ @param showTime 显示时间
+ @param view 添加到的view
+ */
++ (void)showBriefAlert:(NSString *)message time:(NSInteger)showTime inView:(UIView *)view;
 @end
 
 

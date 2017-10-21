@@ -23,9 +23,6 @@ static NSString *const kLoadingMessage = @"加载中";
 /* 默认简短提示语显示的时间，在这统一修改 */
 static CGFloat const   kShowTime  = 2.0f;
 
-/* 默认超时时间，30s后自动去除提示框 */
-static NSTimeInterval const interval = 30.0f;
-
 /* 手势是否可用，默认yes，轻触屏幕提示框隐藏 */
 static BOOL isAvalibleTouch = YES;
 
@@ -45,23 +42,34 @@ BOOL isShowGloomy;//是否显示深色背景
     gloomyView = [[GloomyView alloc] initWithFrame:kDefaultRect];
     gloomyView.backgroundColor = kGloomyBlackColor;
     gloomyView.hidden = YES;
-    isShowGloomy = YES;
+    isShowGloomy = NO;
 }
 + (void)showGloomy:(BOOL)isShow {
     isShowGloomy = isShow;
 }
 #pragma mark - 简短提示语
-+ (void) showBriefAlert:(NSString *) message inView:(UIView *) view{
++ (void) showBriefAlert:(NSString *) message inView:(UIView *) view {
+    [self showBriefAlert:message time:kShowTime inView:view isHerizotal:NO];
+}
++ (void)showBriefAlert:(NSString *)message time:(NSInteger)showTime inView:(UIView *)view {
+    [self showBriefAlert:message time:showTime inView:view isHerizotal:YES];
+}
++ (void)showBriefAlert:(NSString *)message time:(NSInteger)showTime inView:(UIView *)view isHerizotal:(BOOL)isHerizontal {
     dispatch_async(dispatch_get_main_queue(), ^{
         prestrainView = view;
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view ?:kDefaultView animated:YES];
-        hud.labelText = message;
+        hud.detailsLabelText = message;
+        hud.detailsLabelFont = [UIFont systemFontOfSize:14];
         hud.animationType = MBProgressHUDAnimationZoom;
         hud.mode = MBProgressHUDModeText;
         hud.margin = 10.f;
         //HUD.yOffset = 200;
+        
         hud.removeFromSuperViewOnHide = YES;
-        [hud hide:YES afterDelay:kShowTime];
+        [hud hide:NO afterDelay:showTime];
+        if (isHerizontal) {
+            hud.transform = CGAffineTransformMakeRotation(M_PI_2);
+        }
     });
 }
 #pragma mark - 长时间的提示语
@@ -97,8 +105,8 @@ BOOL isShowGloomy;//是否显示深色背景
         }
         [gloomyView addSubview:hud];
         [hud show:YES];
-        [self hideAlertDelay];
     });
+    
 }
 + (void)showWaitingWithTitle:(NSString *)title inView:(UIView *)view {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -115,7 +123,6 @@ BOOL isShowGloomy;//是否显示深色背景
         }
         [gloomyView addSubview:hud];
         [hud show:YES];
-        [self hideAlertDelay];
     });
 }
 +(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title inView:(UIView *)view{
@@ -151,7 +158,9 @@ BOOL isShowGloomy;//是否显示深色背景
 +(void)showAlertWithCustomImage:(NSString *)imageName title:(NSString *)title {
     [self showAlertWithCustomImage:imageName title:title inView:nil];
 }
-
++ (void)showBriefAlert:(NSString *)message time:(NSInteger)showTime {
+    [self showBriefAlert:message time:showTime inView:nil isHerizotal:YES];
+}
 #pragma mark -   GloomyView背景色
 + (void)showBlackGloomyView {
     gloomyView.backgroundColor = kGloomyBlackColor;
@@ -180,6 +189,13 @@ BOOL isShowGloomy;//是否显示深色背景
 +(void)hideAlert{
     dispatch_async(dispatch_get_main_queue(), ^{
         MBProgressHUD *hud = [MBManager HUDForView:gloomyView];
+#if 1
+        gloomyView.frame = CGRectZero;
+        gloomyView.center = prestrainView ? prestrainView.center: [UIApplication sharedApplication].keyWindow.center;
+        gloomyView.alpha = 0;
+        [hud removeFromSuperview];
+        [gloomyView removeFromSuperview];
+#else
         [UIView animateWithDuration:0.5 animations:^{
             gloomyView.frame = CGRectZero;
             gloomyView.center = prestrainView ? prestrainView.center: [UIApplication sharedApplication].keyWindow.center;
@@ -187,16 +203,10 @@ BOOL isShowGloomy;//是否显示深色背景
             hud.alpha = 0;
         } completion:^(BOOL finished) {
             [hud removeFromSuperview];
-            [gloomyView removeFromSuperview];
         }];
+#endif
     });
    
-}
-#pragma mark -   超时后（默认30s）自动隐藏加载提示
-+ (void)hideAlertDelay {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self hideAlert];
-    });
 }
 #pragma mark -   获取view上的hud
 + (MBProgressHUD *)HUDForView:(UIView *)view {
